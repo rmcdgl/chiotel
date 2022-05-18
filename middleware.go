@@ -13,9 +13,10 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-const VERSION = "0.9.0"
-const INSTRUMENTATION_NAME = "github.com/rmcdgl/chiotel"
+const version = "0.9.0"
+const instrumentationName = "github.com/rmcdgl/chiotel"
 
+// DefaultMiddleware is a ready to use middleware that uses the global tracer provider
 func DefaultMiddleware(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -69,14 +70,14 @@ func DefaultMiddleware(next http.Handler) http.Handler {
 func resolveTracer(ctx context.Context) trace.Tracer {
 	if span := trace.SpanFromContext(ctx); span.SpanContext().IsValid() {
 		return span.TracerProvider().Tracer(
-			INSTRUMENTATION_NAME,
-			trace.WithInstrumentationVersion(VERSION),
+			instrumentationName,
+			trace.WithInstrumentationVersion(version),
 			trace.WithSchemaURL(semconv.SchemaURL),
 		)
 	}
 	return otel.Tracer(
-		INSTRUMENTATION_NAME,
-		trace.WithInstrumentationVersion(VERSION),
+		instrumentationName,
+		trace.WithInstrumentationVersion(version),
 		trace.WithSchemaURL(semconv.SchemaURL),
 	)
 
